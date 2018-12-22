@@ -38,6 +38,10 @@ class App extends Component {
       headers: { 'Content-Type': 'application/json' }
     });
     const items = await response.json();
+    if (items.error) {
+      alert(items.error);
+      return;
+    }
     this.setState({ items, todoItem: '' });
   };
 
@@ -48,6 +52,10 @@ class App extends Component {
       headers: { 'Content-Type': 'application/json' }
     });
     const items = await response.json();
+    if (items.error) {
+      alert(items.error);
+      return;
+    }
     this.setState({ items });
   };
 
