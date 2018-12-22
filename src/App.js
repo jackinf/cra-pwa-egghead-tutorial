@@ -7,13 +7,26 @@ class App extends Component {
   state = {
     items: [],
     loading: true,
-    todoItem: ''
+    todoItem: '',
+    offline: !navigator.onLine
   };
 
   async componentDidMount() {
     const response = await fetch('http://localhost:4567/items.json');
     const items = await response.json();
     this.setState({ items, loading: false });
+
+    window.addEventListener('online', this.setOffineStatus);
+    window.addEventListener('offline', this.setOffineStatus);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('online', this.setOffineStatus);
+    window.removeEventListener('offline', this.setOffineStatus);
+  }
+
+  setOffineStatus = () => {
+    this.setState({ offline: !navigator.onLine });
   }
 
   addItem = async (e) => {
@@ -46,6 +59,10 @@ class App extends Component {
             <img src={logo} className="App-logo" alt="logo" />
             My Todo Lost
           </span>
+
+          {
+            this.state.offline && <span className="badge badge-danger my-3">Offline</span>
+          }
         </nav>
 
         <div className="px-3 py-2">

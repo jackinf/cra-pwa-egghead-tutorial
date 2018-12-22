@@ -24,4 +24,9 @@ workbox.routing.registerRoute(
   }) // alternatives are cacheFirst and networkFirst
 );
 
+workbox.routing.registerRoute(
+  new RegExp('http://.*:4567.*\.json'),
+  workbox.strategies.networkFirst() // good for API caching
+);
+
 workbox.precaching.precacheAndRoute(self.__precacheManifest || []);
