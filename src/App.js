@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
+const ITEMS_URL = 'http://192.168.178.21:4567/items.json';
+
 class App extends Component {
 
   state = {
@@ -12,7 +14,7 @@ class App extends Component {
   };
 
   async componentDidMount() {
-    const response = await fetch('http://localhost:4567/items.json');
+    const response = await fetch(ITEMS_URL);
     const items = await response.json();
     this.setState({ items, loading: false });
 
@@ -32,7 +34,7 @@ class App extends Component {
   addItem = async (e) => {
     e.preventDefault();
 
-    const response = await fetch('http://localhost:4567/items.json', {
+    const response = await fetch(ITEMS_URL, {
       method: 'POST',
       body: JSON.stringify(({ item: this.state.todoItem })),
       headers: { 'Content-Type': 'application/json' }
@@ -46,7 +48,7 @@ class App extends Component {
   };
 
   deleteItem = async (itemId) => {
-    const response = await fetch('http://localhost:4567/items.json', {
+    const response = await fetch(ITEMS_URL, {
       method: 'DELETE',
       body: JSON.stringify({ id: itemId }),
       headers: { 'Content-Type': 'application/json' }
