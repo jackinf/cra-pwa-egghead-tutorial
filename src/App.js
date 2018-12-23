@@ -1,10 +1,47 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import backLogo from './back.png';
 
 const ITEMS_URL = 'http://192.168.178.21:4567/items.json';
 
-class App extends Component {
+const AppNavbar = (props) => {
+  return (
+    <nav className="navbar navbar-light bg-ligh">
+      <span className="navbar-brand mb-0 h1">
+        <div>
+          <Link to="/">
+          <img src={props.logo} className="App-logo" alt="logo" />
+        </Link>
+        </div>
+        <div>
+          <Link to="/profile">Profile</Link>
+        </div>
+        {props.title}
+      </span>
+
+      {
+        props.offline && <span className="badge badge-danger my-3">Offline</span>
+      }
+    </nav>
+  )
+};
+
+const Profile = () => {
+  return (
+    <div>
+      <AppNavbar offline={false} title="This is a profile page" logo={backLogo} />
+
+      <div style={{ textAlign: 'center' }}>
+        {/*<img src={GreyProfile} alt="profile"/>*/}
+        <p style={{ color: '#888', fontSize: 20 }}>username</p>
+      </div>
+    </div>
+  )
+};
+
+class List extends Component {
 
   state = {
     items: [],
@@ -64,16 +101,7 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <nav className="navbar navbar-light bg-ligh">
-          <span className="navbar-brand mb-0 h1">
-            <img src={logo} className="App-logo" alt="logo" />
-            My Todo Lost
-          </span>
-
-          {
-            this.state.offline && <span className="badge badge-danger my-3">Offline</span>
-          }
-        </nav>
+        <AppNavbar offline={this.state.offline} title="My Todo List" logo={logo} />
 
         <div className="px-3 py-2">
           <form onSubmit={this.addItem} className="form-inline my-3">
@@ -131,4 +159,11 @@ class App extends Component {
   }
 }
 
-export default App;
+export default () =>
+  <Router>
+    <div>
+      <Route path="/" exact component={List} />
+      <Route path="/profile" exasct component={Profile} />
+    </div>
+  </Router>
+// export default App;
