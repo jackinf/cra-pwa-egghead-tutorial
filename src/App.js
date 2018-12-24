@@ -7,6 +7,21 @@ import AppNavbar from './AppNavbar';
 
 const ITEMS_URL = 'https://192.168.178.21:4568/items.json';
 
+function urlB64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding)
+    .replace(/\-/g, '+')
+    .replace(/_/g, '/');
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
 class Profile extends Component {
 
   state = {
@@ -37,6 +52,19 @@ class Profile extends Component {
     })
   };
 
+  subscribe = () => {
+    const key = process.env.REACT_APP_WEB_PUSH_KEY;
+    if (!key)
+      throw "no key defined!";
+    global.registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlB64ToUint8Array(key)
+    }).then(sub => {
+      console.log("Subscribed!");
+    }).catch(err => {
+      console.log("Did not subscribe.");
+    })
+  };
 
   render() {
     return (
@@ -75,6 +103,8 @@ class Profile extends Component {
             <button onClick={this.startChangeImage}>Toggle camera</button>
           }
 
+          <br/>
+          <button onClick={this.subscribe}>Subscribe for Notifications</button>
           {/*<input type="file" accept="image/*" onChange={this.changeImage} capture="user" />*/}
         </div>
       </div>

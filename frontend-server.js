@@ -1,4 +1,5 @@
 const fs = require('fs');
+const path = require('path');
 const http = require('http');
 const https = require('https');
 const privateKey  = fs.readFileSync('sslcert/localhost.key', 'utf8');
@@ -11,6 +12,9 @@ const app = express();
 app.use(express.static(__dirname + '/build'));
 app.get('*', (request, response) => {
   response.sendFile(path.resolve(__dirname, 'build', 'index.html'))
+});
+app.get('/service-worker.js', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '..', 'build', 'serviceWorker.js'));
 });
 
 const httpServer = http.createServer(app);
