@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "express": "^4.16.4",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-router-dom": "^4.3.1",
@@ -13,7 +14,9 @@
     "build": "react-app-rewired build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
-    "build-and-serve": "npm run build && serve build"
+    "build-and-serve": "npm run build && npm run serve-frontend",
+    "serve-frontend": "node frontend-server",
+    "serve-backend": "node backend-server"
   },
   "eslintConfig": {
     "extends": "react-app"

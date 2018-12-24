@@ -1,45 +1,87 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Link, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import backLogo from './back.png';
+import AppNavbar from './AppNavbar';
 
-const ITEMS_URL = 'http://192.168.178.21:4567/items.json';
+const ITEMS_URL = 'https://192.168.178.21:4568/items.json';
 
-const AppNavbar = (props) => {
-  return (
-    <nav className="navbar navbar-light bg-ligh">
-      <span className="navbar-brand mb-0 h1">
-        <div>
-          <Link to="/">
-          <img src={props.logo} className="App-logo" alt="logo" />
-        </Link>
+class Profile extends Component {
+
+  state = {
+    image: null,
+    supportsCamera: 'mediaDevices' in navigator
+  };
+
+  changeImage = (e) => {
+    this.setState({
+      image: URL.createObjectURL(e.target.files[0])
+    });
+  };
+
+  startChangeImage = () => {
+    this.setState({ enableCamera: !this.state.enableCamera });
+  };
+
+  takeImage = () => {
+    this._canvas.width = this._video.videoWidth;
+    this._canvas.height = this._video.videoHeight;
+
+    this._canvas.getContext('2d').drawImage(this._video, 0, 0, this._video.videoWidth, this._video.videoHeight);
+    this._video.srcObject.getVideoTracks().forEach(track => { track.stop(); });
+
+    this.setState({
+      image: this._canvas.toDataURL(),
+      enableCamera: false
+    })
+  };
+
+
+  render() {
+    return (
+      <div>
+        <AppNavbar offline={false} title="This is a profile page" logo={backLogo} />
+
+        <div style={{ textAlign: 'center' }}>
+          {this.state.image && <img src={this.state.image} alt="profile" style={{ height: 200, marginTop: 50 }} /> }
+          <p style={{ color: '#888', fontSize: 20 }}>username</p>
+          <br/>
+
+          {
+            this.state.enableCamera &&
+            <div>
+              <video
+                ref={c => {
+                  this._video = c;
+                  if (this._video) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                      .then(stream => this._video.srcObject = stream)
+                  }
+                }}
+                controls={false} autoPlay
+                style={{ width: '100%', maxWidth: 300 }}
+              />
+              <br/>
+              <button onClick={this.takeImage}>Take Image</button>
+
+              <canvas ref={c => this._canvas = c} style={{ display: 'none'}} />
+            </div>
+          }
+
+          <br/>
+          {
+            this.state.supportsCamera &&
+            <button onClick={this.startChangeImage}>Toggle camera</button>
+          }
+
+          {/*<input type="file" accept="image/*" onChange={this.changeImage} capture="user" />*/}
         </div>
-        <div>
-          <Link to="/profile">Profile</Link>
-        </div>
-        {props.title}
-      </span>
-
-      {
-        props.offline && <span className="badge badge-danger my-3">Offline</span>
-      }
-    </nav>
-  )
-};
-
-const Profile = () => {
-  return (
-    <div>
-      <AppNavbar offline={false} title="This is a profile page" logo={backLogo} />
-
-      <div style={{ textAlign: 'center' }}>
-        {/*<img src={GreyProfile} alt="profile"/>*/}
-        <p style={{ color: '#888', fontSize: 20 }}>username</p>
       </div>
-    </div>
-  )
-};
+    )
+
+  }
+}
 
 class List extends Component {
 
@@ -66,7 +108,7 @@ class List extends Component {
 
   setOffineStatus = () => {
     this.setState({ offline: !navigator.onLine });
-  }
+  };
 
   addItem = async (e) => {
     e.preventDefault();
@@ -163,7 +205,7 @@ export default () =>
   <Router>
     <div>
       <Route path="/" exact component={List} />
-      <Route path="/profile" exasct component={Profile} />
+      <Route path="/profile" exact={true} component={Profile} />
     </div>
   </Router>
 // export default App;

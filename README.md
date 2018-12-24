@@ -1,5 +1,21 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Quickstart
+
+Install packages ```npm install```
+Run backend ```npm run serve-banckend```
+Build and serve frontend ```npm run build-and-serve```
+
+## Prerequisites
+
+Generate localhost sslcerts using
+``` 
+openssl req -x509 -out localhost.crt -keyout localhost.key \
+  -newkey rsa:2048 -nodes -sha256 \
+  -subj '/CN=localhost' -extensions EXT -config <( \
+   printf "[dn]\nCN=localhost\n[req]\ndistinguished_name = dn\n[EXT]\nsubjectAltName=DNS:localhost\nkeyUsage=digitalSignature\nextendedKeyUsage=serverAuth")
+```
+
 ## Available Scripts
 
 In the project directory, you can run:

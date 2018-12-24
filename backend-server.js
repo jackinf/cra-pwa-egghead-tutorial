@@ -1,9 +1,15 @@
+const fs = require('fs');
 const express = require('express');
 const bodyParser = require('body-parser');
 const uuidv4 = require('uuid/v4');
+const http = require('http');
+const https = require('https');
+const privateKey  = fs.readFileSync('sslcert/localhost.key', 'utf8');
+const certificate = fs.readFileSync('sslcert/localhost.crt', 'utf8');
 
 const app = express();
 const port = 4567;
+const httpsPort = 4568;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -37,8 +43,13 @@ app.delete('/items.json', (req, res) => {
         if (item.id !== req.body.id) {
             return item;
         }
-    })
+    });
     res.json(items);
 });
 
-app.listen(port, () => console.log(`Todo server listening on port ${port}!`));
+// app.listen(port, () => console.log(`Todo server listening on port ${port}!`));
+const httpServer = http.createServer(app);
+const httpsServer = https.createServer({key: privateKey, cert: certificate}, app);
+httpServer.listen(port);
+httpsServer.listen(httpsPort);
+console.log(`Todo server listening on port ${port} and ${httpsPort}!`);
